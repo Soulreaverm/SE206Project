@@ -14,6 +14,7 @@ class FestivalInterface:
             exit()
         
         self.p.stdin.write("(audio_mode 'async)\n")
+        self.p.stdin.write("(voice_rab_diphone)\n")
     #The main function of the class, the one that causes text to be sent to festival along the pipe
     def speech(self, text):
         #Make sure the input isn't empty

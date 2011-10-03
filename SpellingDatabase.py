@@ -9,7 +9,7 @@ class SpellingDatabase(object):
         database_check = self.sql("SELECT name FROM sqlite_master WHERE type='table'")
         #Check if there is a database that already exists.
         #Create the tables if the number of tables isnt what it should be.
-        if len(database_check) != 4:
+        if len(database_check) < 4:
             self.sql("""CREATE TABLE lists (list_id INTEGER PRIMARY KEY,
                                             list_name varchar(20),
                                             source varchar(100),

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from Tkinter import Tk, Button, Entry, Label, Frame, StringVar, Canvas
 from Festival import FestivalInterface
 from SpellingDatabase import SpellingDatabase
@@ -43,8 +44,9 @@ class SpellingGame:
         self.entry_text = StringVar()
         entry = Entry(frame, width=15, textvariable=self.entry_text)
         button = Button(frame, width=10, text="Submit", command=self.next_word)
-        self.canvas = Canvas(frame, width=250, height=50, bg="#FFFFFF")
-        self.canvas_text = self.canvas.create_text((125, 25), text="?", font=("Helvetica", 20, "bold"))
+        self.canvas = Canvas(frame, width=500, height=250, bg="#004183")
+        self.canvas_text = self.canvas.create_text((250, 125), text="?",
+                           font=("Helvetica", 50, "bold"))
         self.canvas.grid(row=0, column=0, columnspan=2)
         entry.grid(row=1, column=0)
         button.grid(row=1, column=1)
