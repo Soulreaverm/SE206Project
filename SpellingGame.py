@@ -1,15 +1,18 @@
 #!/usr/bin/env python
-from Tkinter import Tk, Button, Entry, Label, Frame, StringVar, Canvas
+from Tkinter import Tk, Button, Entry, Label, Frame, StringVar, Canvas, NE, CENTER, END
 from Festival import FestivalInterface
 from SpellingDatabase import SpellingDatabase
 import random
 
 class SpellingGame:
 
-    def __init__(self):
+    def __init__(self, parent, user):
 
+        self.parent = parent
+        self.user = user
+        print "Welcome, %s"%(self.user.username)
         self.word_list = self.get_dictionary()
-        self.random_list = self.get_random_list()
+        self.random_list = self.get_random_list(15)
         self.festival = FestivalInterface()
         self.init_gui()
         
@@ -23,38 +26,69 @@ class SpellingGame:
         return word_list
  
 
-    def get_random_list(self):        
-       return random.sample(self.word_list, 15)
-    
+    def get_random_list(self, length):
+        random_list = random.sample(self.word_list, length)
+        self.list_length = length
+        self.word_index = 0
+        return random_list
+
     def next_word(self):
-        if len(self.random_list) > 0:
-            self.current_word = self.random_list[0]
-            self.canvas.itemconfig(self.canvas_text, text=self.current_word)
+        if self.word_index + 1 < self.list_length:
+            self.word_index += 1
+            self.current_word = self.random_list[self.word_index]
+            self.canvas.itemconfig(self.progress_display, text="%d/%d"
+                                   %(self.word_index + 1, self.list_length))
             self.festival.speech(self.current_word)
-            self.random_list.pop(0)
         else:
-            self.random_list = self.get_random_list()
+            self.random_list = self.get_random_list(15)
             self.next_word()
+
+    def replay_word(self):
+       self.festival.speech(self.current_word)
+
+    def submit_word(self):
+        guess = self.entry.get()
+        print guess
+        print self.current_word
+        self.entry.delete(0, END)
+        if guess == self.current_word:
+            print "Correct!"
+        else:
+            print "Incorrect."
+        self.canvas.itemconfig(self.word_display, text='%s'%(self.current_word))
 
     def init_gui(self):
         root = Tk()
         frame = Frame(root, height=500, width=500)
         frame.pack()
 
-        self.entry_text = StringVar()
-        entry = Entry(frame, width=15, textvariable=self.entry_text)
-        button = Button(frame, width=10, text="Submit", command=self.next_word)
+        self.entry = Entry(root, width=15, font=('Helvetica', 20, 'normal'),
+                                                  justify=CENTER)
+        buttonNext = Button(frame, width=10, text="Next Word",
+                            command=self.next_word)
+        buttonSubmit = Button(frame, width=10, text="Submit",
+                              command=self.submit_word)
+        buttonReplay = Button(frame, width=10, text="Repeat Word",
+                              command=self.replay_word)
         self.canvas = Canvas(frame, width=500, height=250, bg="#004183")
-        self.canvas_text = self.canvas.create_text((250, 125), text="?",
+        self.word_display = self.canvas.create_text((250, 125), text="?",
                            font=("Helvetica", 50, "bold"))
-        self.canvas.grid(row=0, column=0, columnspan=2)
-        entry.grid(row=1, column=0)
-        button.grid(row=1, column=1)
+        self.progress_display = self.canvas.create_text((493, 5),
+                                text="%d/%d"%(self.word_index + 1,
+                                self.list_length),font=("Helvetica",
+                                25, "bold"), anchor=NE)
+        self.canvas.create_window(250, 200, window=self.entry)
+        self.canvas.grid(row=0, column=0, columnspan=3)
+        buttonReplay.grid(row=1, column=0)
+        buttonSubmit.grid(row=1, column=1)
+        buttonNext.grid(row=1, column=2)
         
         root.mainloop()        
 
 def main():
-    game = SpellingGame()
+    user = Button()
+    user.username = "hello"
+    game = SpellingGame(1, user)
 
 if __name__=='__main__':
     main()
