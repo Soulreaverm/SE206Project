@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from Tkinter import Tk, Button, Entry, Label, Frame, StringVar, Canvas, NE, CENTER, END
+from Tkinter import Tk, Button, Entry, Label, Frame, StringVar, Canvas
+from Tkconstants import *
 from Festival import FestivalInterface
 from SpellingDatabase import SpellingDatabase
 from PIL import Image, ImageTk
@@ -40,6 +41,10 @@ class SpellingGame:
             self.canvas.itemconfig(self.progress_display, text="%d/%d"
                                    %(self.random_list.index(self.current_word) + 1,
                                    self.list_length))
+            self.canvas.itemconfig(self.word_display, text="?", fill="#000000")
+            self.canvas.itemconfig(self.canvas_image, state=HIDDEN)
+            self.buttonSubmit.configure(state=NORMAL)
+            self.buttonNext.configure(state=DISABLED)
             self.festival.speech(self.current_word)
         except StopIteration:
             self.random_list = self.get_random_list(15)
@@ -56,15 +61,19 @@ class SpellingGame:
         else:
             self.incorrect()
         self.canvas.itemconfig(self.word_display, text='%s'%(self.current_word))
+        self.buttonNext.configure(state=NORMAL)
+        self.buttonSubmit.configure(state=DISABLED)
+        self.canvas.itemconfig(self.canvas_image, state=NORMAL)
+        
 
     def correct(self):
         self.canvas.itemconfig(self.canvas_image, image=self.correct_img)
-        self.canvas.itemconfig(self.word_display, fill="green")
+        self.canvas.itemconfig(self.word_display, fill="#139E1C")
         print "Correct!"
 
     def incorrect(self):
         self.canvas.itemconfig(self.canvas_image, image=self.wrong_img)
-        self.canvas.itemconfig(self.word_display, fill="red")
+        self.canvas.itemconfig(self.word_display, fill="#F30000")
         print "Incorrect"
 
     def init_gui(self):
@@ -82,13 +91,13 @@ class SpellingGame:
         self.entry = Entry(root, width=15, font=('Helvetica', 20, 'normal'),
                                                   justify=CENTER)
         self.entry.bind("<Return>", self.submit_word)
-        buttonNext = Button(frame, width=10, text="Next Word",
-                            command=self.next_word)
-        buttonSubmit = Button(frame, width=10, text="Submit",
+        self.buttonNext = Button(frame, width=10, text="Next Word",
+                            command=self.next_word, state=DISABLED)
+        self.buttonSubmit = Button(frame, width=10, text="Submit",
                               command=self.submit_word)
         buttonReplay = Button(frame, width=10, text="Repeat Word",
                               command=self.replay_word)
-        self.canvas = Canvas(frame, width=600, height=250, bg="#004183")
+        self.canvas = Canvas(frame, width=600, height=250, bg="#FFFFFF")
         self.word_display = self.canvas.create_text((300, 125), text="?",
                            font=("Helvetica", 50, "bold"))
         self.progress_display = self.canvas.create_text((593, 5),
@@ -98,8 +107,8 @@ class SpellingGame:
         self.canvas_image = self.canvas.create_image(500, 200)
         self.canvas.grid(row=0, column=0, columnspan=3)
         buttonReplay.grid(row=1, column=0)
-        buttonSubmit.grid(row=1, column=1)
-        buttonNext.grid(row=1, column=2)
+        self.buttonSubmit.grid(row=1, column=1)
+        self.buttonNext.grid(row=1, column=2)
         
         root.mainloop()        
 
