@@ -69,12 +69,10 @@ class SpellingGame:
     def correct(self):
         self.canvas.itemconfig(self.canvas_image, image=self.correct_img)
         self.canvas.itemconfig(self.word_display, fill="#139E1C")
-        print "Correct!"
 
     def incorrect(self):
         self.canvas.itemconfig(self.canvas_image, image=self.wrong_img)
         self.canvas.itemconfig(self.word_display, fill="#F30000")
-        print "Incorrect"
 
     def init_gui(self):
         root = Tk()
