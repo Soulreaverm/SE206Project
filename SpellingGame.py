@@ -4,6 +4,7 @@ from Tkconstants import *
 from Festival import FestivalInterface
 from SpellingDatabase import SpellingDatabase
 from PIL import Image, ImageTk
+from Word import Word
 import random
 
 class SpellingGame:
@@ -20,11 +21,12 @@ class SpellingGame:
         
     def get_dictionary(self):
         db = SpellingDatabase()
-        word_records = db.sql("""SELECT word FROM words WHERE
+        word_records = db.sql("""SELECT * FROM words WHERE
                               difficulty LIKE 'SB%'""")
         word_list = []
         for word in word_records:
-            word_list.append(str(word[0]))
+            word_list.append(Word(word))
+        print word_list[0].word
         return word_list
  
 
@@ -38,46 +40,52 @@ class SpellingGame:
     def next_word(self):
         try:
             self.current_word = self.random_list_iter.next()
-            self.canvas.itemconfig(self.progress_display, text="%d/%d"
+            self.game_canvas.itemconfig(self.progress_display, text="%d/%d"
                                    %(self.random_list.index(self.current_word) + 1,
                                    self.list_length))
-            self.canvas.itemconfig(self.word_display, text="?", fill="#000000")
-            self.canvas.itemconfig(self.canvas_image, state=HIDDEN)
+            self.game_canvas.itemconfig(self.word_display, text="?", fill="#004183")
+            self.game_canvas.itemconfig(self.canvas_image, state=HIDDEN)
             self.buttonSubmit.configure(state=NORMAL)
             self.buttonNext.configure(state=DISABLED)
-            self.festival.speech(self.current_word)
+            self.festival.speech(self.current_word.word)
         except StopIteration:
-            self.random_list = self.get_random_list(15)
-            self.next_word()
+            self.list_complete()
+
+    def list_complete(self):
+        for word in self.random_list:
+            print word.answer
 
     def replay_word(self):
-       self.festival.speech(self.current_word)
+       self.festival.speech(self.current_word.word)
 
     def submit_word(self, event=None):
         guess = self.entry.get()
         self.entry.delete(0, END)
-        if guess == self.current_word:
+        if guess == self.current_word.word:
             self.correct()
+            self.current_word.setAnswer(guess, True)
         else:
             self.incorrect()
-        self.canvas.itemconfig(self.word_display, text='%s'%(self.current_word))
+            self.current_word.setAnswer(guess, False)
+        self.game_canvas.itemconfig(self.word_display, text='%s'%(self.current_word.word))
         self.buttonNext.configure(state=NORMAL)
         self.buttonSubmit.configure(state=DISABLED)
-        self.canvas.itemconfig(self.canvas_image, state=NORMAL)
+        self.game_canvas.itemconfig(self.canvas_image, state=NORMAL)
         
 
     def correct(self):
-        self.canvas.itemconfig(self.canvas_image, image=self.correct_img)
-        self.canvas.itemconfig(self.word_display, fill="#139E1C")
+        self.game_canvas.itemconfig(self.canvas_image, image=self.correct_img)
+        self.game_canvas.itemconfig(self.word_display, fill="#139E1C")
 
     def incorrect(self):
-        self.canvas.itemconfig(self.canvas_image, image=self.wrong_img)
-        self.canvas.itemconfig(self.word_display, fill="#F30000")
+        self.game_canvas.itemconfig(self.canvas_image, image=self.wrong_img)
+        self.game_canvas.itemconfig(self.word_display, fill="#F30000")
 
     def init_gui(self):
         root = Tk()
-        frame = Frame(root, height=500, width=500)
-        frame.pack()
+
+        game_frame = Frame(root, height=500, width=500)
+        game_frame.pack()
 
         correct_img = Image.open("correct.png")
         wrong_img  = Image.open("wrong.png")
@@ -88,25 +96,30 @@ class SpellingGame:
 
         self.entry = Entry(root, width=15, font=('Helvetica', 20, 'normal'),
                                                   justify=CENTER)
-        self.entry.bind("<Return>", self.submit_word)
-        self.buttonNext = Button(frame, width=10, text="Next Word",
+        self.entry.bind("<Return>", lambda x:self.buttonSubmit.invoke())
+        self.buttonNext = Button(game_frame, width=10, text="Next Word",
                             command=self.next_word, state=DISABLED)
-        self.buttonSubmit = Button(frame, width=10, text="Submit",
+        self.buttonSubmit = Button(game_frame, width=10, text="Submit",
                               command=self.submit_word)
-        buttonReplay = Button(frame, width=10, text="Repeat Word",
+        buttonReplay = Button(game_frame, width=10, text="Repeat Word",
                               command=self.replay_word)
-        self.canvas = Canvas(frame, width=600, height=250, bg="#FFFFFF")
-        self.word_display = self.canvas.create_text((300, 125), text="?",
-                           font=("Helvetica", 50, "bold"))
-        self.progress_display = self.canvas.create_text((593, 5),
+        self.game_canvas = Canvas(game_frame, width=600, height=250, bg="#FFFFFF")
+        self.word_display = self.game_canvas.create_text((300, 125), text="?",
+                           font=("Helvetica", 50, "bold"), fill="#004183")
+        self.progress_display = self.game_canvas.create_text((593, 5),
                                 text="%d/%d"%(1, self.list_length),
                                 font=("Helvetica", 25, "bold"), anchor=NE)
-        self.canvas.create_window(300, 200, window=self.entry)
-        self.canvas_image = self.canvas.create_image(500, 200)
-        self.canvas.grid(row=0, column=0, columnspan=3)
+        self.game_canvas.create_window(300, 200, window=self.entry)
+        self.game_canvas_image = self.game_canvas.create_image(500, 200)
+        self.game_canvas.grid(row=0, column=0, columnspan=3)
         buttonReplay.grid(row=1, column=0)
         self.buttonSubmit.grid(row=1, column=1)
         self.buttonNext.grid(row=1, column=2)
+
+        start_frame = Frame(root, height=300, width=600)
+        start_frame.pack()
+        self.start_canvas = Canvas(start_frame, width=600, height=250, bg="#FFFFFF")
+        self.start_canvas.pack()
         
         root.mainloop()        
 
