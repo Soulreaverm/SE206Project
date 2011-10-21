@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from Login import Login
 from SpellingGame import SpellingGame
 
 class MainApp():

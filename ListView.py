@@ -107,7 +107,7 @@ class ListView(Frame):
         word_list = self.words_list_pane.getDisplayed()
         long_sentence = ""
         for word in word_list:
-            long_sentence += " %s." % (word)
+            long_sentence += " %s," % (word)
         self.fest.speech(long_sentence)
         
     def stopSpeech(self):
@@ -117,7 +117,7 @@ class ListView(Frame):
         word_records = self.db.getWords(self.lists_list_pane.get(item_index))
         word_names = []
         for row in word_records:
-            word_names.append(str(row[0]))
+            word_names.append(str(row[1]))
         word_names.sort(key=str.lower)
         self.words_list_pane.display(word_names)
         

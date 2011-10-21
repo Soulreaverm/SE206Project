@@ -15,6 +15,7 @@ class CreateView(Frame):
 
         #Connect to the word/list database 
         self.db = SpellingDatabase()
+        self.parent = parent
 		
         #Create a frame containing a menu for choosing word category
         categorymenu_frame = Frame(self, width=340, height=30, relief=SUNKEN, bd=1)
@@ -192,6 +193,7 @@ class CreateView(Frame):
         self.db.createList(word_list, self.savelist_entry.get())
         self.savelist_entry.delete(0, END)
         self.db.commit()
+        self.parent.parent.update_lists()
         
         
 

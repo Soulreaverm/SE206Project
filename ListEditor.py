@@ -26,6 +26,7 @@ class ListEditor(Frame):
                           width=804, 
                           bd=border_width,
                           relief=border_style)
+        content_frame.parent = parent
 
     
         nav_frame.grid(column=0, row=0)
@@ -38,14 +39,14 @@ class ListEditor(Frame):
         fontMouseOut = tkFont.Font(family="Helvetica", size=14, underline=False)
 
         #Creating Navigation Labels
-        lNavStudentRecords = Label(nav_frame, 
+        self.lNavStudentRecords = Label(nav_frame, 
                                text="Student Records", 
                                bg="white", 
                                font=fontMouseOut, 
                                bd=border_width, 
                                relief=border_style, 
                                width=20)
-        lNavViewLists = Label(nav_frame, 
+        self.lNavViewLists = Label(nav_frame, 
                           text="View Word Lists", 
                           bg="white", 
                           font=fontMouseOut, 
@@ -53,7 +54,7 @@ class ListEditor(Frame):
                           relief=border_style, 
                           width=20)
 
-        lNavCreateLists = Label(nav_frame, 
+        self.lNavCreateLists = Label(nav_frame, 
                             text="Create Word Lists", 
                             bg="white",
                             font=fontMouseOut, 
@@ -65,26 +66,26 @@ class ListEditor(Frame):
     
         #Binding Mouse events to the Labels
         #Mouse Clicks
-        lNavViewLists.bind("<Button-1>", partial(self.switch_frame, 2))
-        lNavCreateLists.bind("<Button-1>", partial(self.switch_frame, 1))
-        lNavStudentRecords.bind("<Button-1>", partial(self.switch_frame, 3))
+        self.lNavViewLists.bind("<Button-1>", partial(self.switch_frame, 2))
+        self.lNavCreateLists.bind("<Button-1>", partial(self.switch_frame, 1))
+        self.lNavStudentRecords.bind("<Button-1>", partial(self.switch_frame, 3))
         #Mouse Movements
-        lNavViewLists.bind("<Enter>", lambda(event):
-            lNavViewLists.configure(font=fontMouseOver))
-        lNavCreateLists.bind("<Enter>", lambda(event):
-            lNavCreateLists.configure(font=fontMouseOver))
-        lNavViewLists.bind("<Leave>", lambda(event):
-            lNavViewLists.configure(font=fontMouseOut))
-        lNavCreateLists.bind("<Leave>", lambda(event):
-            lNavCreateLists.configure(font=fontMouseOut))
-        lNavStudentRecords.bind("<Enter>", lambda(event):
-            lNavStudentRecords.configure(font=fontMouseOver))
-        lNavStudentRecords.bind("<Leave>", lambda(event):
-            lNavStudentRecords.configure(font=fontMouseOut))
+        self.lNavViewLists.bind("<Enter>", lambda(event):
+            self.lNavViewLists.configure(font=fontMouseOver))
+        self.lNavCreateLists.bind("<Enter>", lambda(event):
+            self.lNavCreateLists.configure(font=fontMouseOver))
+        self.lNavViewLists.bind("<Leave>", lambda(event):
+            self.lNavViewLists.configure(font=fontMouseOut))
+        self.lNavCreateLists.bind("<Leave>", lambda(event):
+            self.lNavCreateLists.configure(font=fontMouseOut))
+        self.lNavStudentRecords.bind("<Enter>", lambda(event):
+            self.lNavStudentRecords.configure(font=fontMouseOver))
+        self.lNavStudentRecords.bind("<Leave>", lambda(event):
+            self.lNavStudentRecords.configure(font=fontMouseOut))
         #Gridding the labels
-        #lNavStudentRecords.grid(column=0, row=0)
-        lNavViewLists.grid(column=0,row=1)
-        lNavCreateLists.grid(column=0, row=2)
+        #self.lNavStudentRecords.grid(column=0, row=0)
+        self.lNavViewLists.grid(column=0,row=1)
+        self.lNavCreateLists.grid(column=0, row=2)
         buttonBack.grid(column=0, row=3)
     
         #Creating the two views we have so far 
@@ -97,30 +98,30 @@ class ListEditor(Frame):
 
         self.viewstudents = StudentView(content_frame, 800, default_height)
 
-    def switch_frame(frameNumber, event):
+    def switch_frame(self, frameNumber, event):
         if frameNumber == 1:
             self.viewlists.pack_forget()
             self.viewcreate.pack()
             self.viewstudents.pack_forget()
-            lNavViewLists.configure(bg="white", fg="black")
-            lNavCreateLists.configure(bg="#DDDDDD", fg="#8800AA")
-            lNavStudentRecords.configure(bg="white", fg="black")
+            self.lNavViewLists.configure(bg="white", fg="black")
+            self.lNavCreateLists.configure(bg="#DDDDDD", fg="#8800AA")
+            self.lNavStudentRecords.configure(bg="white", fg="black")
             self.viewcreate.update_category()
         elif frameNumber == 2:
             self.viewcreate.pack_forget()
             self.viewlists.pack()
             self.viewstudents.pack_forget()
-            lNavCreateLists.configure(bg="white", fg="black")
-            lNavViewLists.configure(bg="#DDDDDD", fg="#8800AA")
-            lNavStudentRecords.configure(bg="white", fg="black")
+            self.lNavCreateLists.configure(bg="white", fg="black")
+            self.lNavViewLists.configure(bg="#DDDDDD", fg="#8800AA")
+            self.lNavStudentRecords.configure(bg="white", fg="black")
             self.viewlists.update()
         else:
             self.viewcreate.pack_forget()
             self.viewlists.pack_forget()
             self.viewstudents.pack()
-            lNavCreateLists.configure(bg="white", fg="black")
-            lNavViewLists.configure(bg="white", fg="black")
-            lNavStudentRecords.configure(bg="#DDDDDD", fg="#8800AA")
+            self.lNavCreateLists.configure(bg="white", fg="black")
+            self.lNavViewLists.configure(bg="white", fg="black")
+            self.lNavStudentRecords.configure(bg="#DDDDDD", fg="#8800AA")
 
 
 

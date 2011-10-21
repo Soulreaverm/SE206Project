@@ -9,15 +9,15 @@ from ResultsFrame import ResultsFrame
 from Word import Word
 from List import WordList
 from ListEditor import ListEditor
+from LoginFrame import LoginFrame
 import random
 
 class SpellingGame(Tk):
 
-    def __init__(self, parent, user):
+    def __init__(self):
 
         Tk.__init__(self)
-        self.parent = parent
-        self.user = user
+        self.title('Spelling Game')
         self.db = SpellingDatabase()
         self.word_list = self.get_dictionary()
         self.list_list = self.get_lists()
@@ -30,6 +30,9 @@ class SpellingGame(Tk):
         for wordlist in list_records:
             list_list.append(WordList(wordlist))
         return list_list
+
+    def update_lists(self):
+        self.list_list = self.get_lists()
             
         
     def get_dictionary(self):
@@ -44,6 +47,12 @@ class SpellingGame(Tk):
     def get_random_list(self, length):
         words = random.sample(self.word_list, length)
         return words
+
+    def login(self, user):
+        self.user = user
+        self.login_frame.pack_forget()
+        self.start_frame.welcomeMessage()
+        self.start_frame.pack()
 
     def start_game(self, word_list):
         self.current_list = word_list
@@ -66,6 +75,7 @@ class SpellingGame(Tk):
     def new_list(self):
         self.results_frame.pack_forget()
         self.list_editor.pack_forget()
+        self.start_frame.update_list()
         self.start_frame.pack()
 
     def show_editor(self):
@@ -74,10 +84,12 @@ class SpellingGame(Tk):
 
     def init_gui(self):
 
+        self.login_frame = LoginFrame(self)
+        self.login_frame.pack()
+
         self.game_frame = GameFrame(self)
 
         self.start_frame = StartFrame(self)
-        self.start_frame.pack()
 
         self.results_frame = ResultsFrame(self)
 
@@ -87,10 +99,7 @@ class SpellingGame(Tk):
         self.mainloop()
 
 def main():
-    user = Button()
-    user.username = "Michael"
-    user.u_id = 1
-    game = SpellingGame(1, user)
+    game = SpellingGame()
 
 if __name__=='__main__':
     main()
