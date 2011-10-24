@@ -2,7 +2,6 @@
 from Tkinter import Tk, Frame, Label, SUNKEN, W, LEFT, Button
 from ListView import ListView
 from CreateView import CreateView
-from StudentView import StudentView
 from functools import partial
 import tkFont
 
@@ -96,13 +95,11 @@ class ListEditor(Frame):
                                 border_style, border_width, background_colour)
         self.viewlists.pack()
 
-        self.viewstudents = StudentView(content_frame, 800, default_height)
 
     def switch_frame(self, frameNumber, event):
         if frameNumber == 1:
             self.viewlists.pack_forget()
             self.viewcreate.pack()
-            self.viewstudents.pack_forget()
             self.lNavViewLists.configure(bg="white", fg="black")
             self.lNavCreateLists.configure(bg="#DDDDDD", fg="#8800AA")
             self.lNavStudentRecords.configure(bg="white", fg="black")
@@ -110,7 +107,6 @@ class ListEditor(Frame):
         elif frameNumber == 2:
             self.viewcreate.pack_forget()
             self.viewlists.pack()
-            self.viewstudents.pack_forget()
             self.lNavCreateLists.configure(bg="white", fg="black")
             self.lNavViewLists.configure(bg="#DDDDDD", fg="#8800AA")
             self.lNavStudentRecords.configure(bg="white", fg="black")
@@ -118,7 +114,6 @@ class ListEditor(Frame):
         else:
             self.viewcreate.pack_forget()
             self.viewlists.pack_forget()
-            self.viewstudents.pack()
             self.lNavCreateLists.configure(bg="white", fg="black")
             self.lNavViewLists.configure(bg="white", fg="black")
             self.lNavStudentRecords.configure(bg="#DDDDDD", fg="#8800AA")

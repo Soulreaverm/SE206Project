@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from Tkinter import Tk, Entry, Button, StringVar, Label, Frame, Canvas
 from Tkconstants import *
-import hashlib
+import hashlib, tkMessageBox
 from SpellingDatabase import SpellingDatabase
 from User import User
 
@@ -17,26 +17,26 @@ class LoginFrame(Frame):
         self.userEntry = Entry(self.parent, width=15, font=font)
         self.passEntry = Entry(self.parent, width=15, show='*', font=font)
         self.passEntry.bind('<Return>', self.login)
-        buttonSubmit = Button(self.parent, text="Login", command=self.login)
+        buttonSubmit = Button(self.parent, text="Login", command=self.login, width=10)
         buttonRegSwitch = Button(self.parent, text="New User",
-                                 command=self.viewRegister)
+                                 command=self.viewRegister, width=10)
 
         self.userRegEntry = Entry(self.parent, width=15, font=font)
         self.passRegEntry = Entry(self.parent, width=15, show='*',
                                   font=font)
         self.passRegEntry.bind('<Return>', self.register)
         buttonRegister = Button(self.parent, text="Register",
-                                command=self.register)
+                                command=self.register, width=10)
         buttonBack = Button(self.parent, text="Back",
-                            command=self.viewLogin)
+                            command=self.viewLogin, width=10)
         
         self.login_canvas = Canvas(self, width=600, height=250, bg="#FFFFFF")
         self.register_canvas = Canvas(self, width=600, height=250, bg="#FFFFFF")
        
-        self.login_canvas.create_text(300, 40, text="Login", font=font)
-        self.login_canvas.create_text(200, 80, text="Username:", font=font,
+        self.login_canvas.create_text(300, 40, text="Login", font=font, fill="#004183")
+        self.login_canvas.create_text(170, 80, text="Username:", font=font,
                                       anchor=N)
-        self.login_canvas.create_text(200, 150, text="Password:", font=font,
+        self.login_canvas.create_text(170, 150, text="Password:", font=font,
                                       anchor=N)
         self.login_canvas.create_window(300, 80, anchor=NW,
                                         window=self.userEntry)
@@ -46,10 +46,10 @@ class LoginFrame(Frame):
         self.login_canvas.create_window(400, 220, window=buttonSubmit)
         self.login_canvas.pack()
 
-        self.register_canvas.create_text(300, 40, text="Register", font=font)
-        self.register_canvas.create_text(200, 80, text="Username:", font=font,
+        self.register_canvas.create_text(300, 40, text="Register", font=font, fill="#004183")
+        self.register_canvas.create_text(170, 80, text="Username:", font=font,
                                          anchor=N)
-        self.register_canvas.create_text(200, 150, text="Password:", font=font,
+        self.register_canvas.create_text(170, 150, text="Password:", font=font,
                                          anchor=N)
         self.register_canvas.create_window(300, 80, anchor=NW, 
                                            window=self.userRegEntry)
@@ -69,8 +69,14 @@ class LoginFrame(Frame):
             passHash = userDetails[0][2]
             if (hashlib.sha1(passwordGiven).hexdigest() == passHash):
                 self.parent.login(User(userDetails[0]))
+                loginFailed = False
+            else:
+                loginFailed = True
         else:
-            print 'Invalid Username or Password'
+            loginFailed = True
+        if loginFailed:
+            tkMessageBox.showerror("Login Failed",
+                                   "Invalid username or password")
             self.userEntry.delete(0, END)
             self.passEntry.delete(0, END)
 

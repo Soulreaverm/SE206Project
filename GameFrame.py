@@ -4,7 +4,7 @@ from ProgressBar import ProgressBar
 class GameFrame(Frame):
     
     def __init__(self, parent):
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, width=600, height=250)
         self.parent = parent    
        
     def init_gui(self):
@@ -76,14 +76,14 @@ QIBBCgJh4NAmijAxAKxAEJiwnBcN4gAwdAIIHYNUB24Qx8U8QFn2guEaI/KZgAAAOw=="""
         self.entry = Entry(self.parent, width=15, 
                            font=('Helvetica', 20, 'normal'), justify=CENTER)
         self.entry.bind("<Return>", lambda x:self.buttonSubmit.invoke())
-        self.buttonNext = Button(self, width=10, text="Next Word",
+        self.buttonNext = Button(self.parent, width=10, text="Next Word",
                             command=self.next_word, state=DISABLED)
-        self.buttonSubmit = Button(self, width=10, text="Submit",
+        self.buttonSubmit = Button(self.parent, width=10, text="Submit",
                               command=self.submit_word)
-        buttonReplay = Button(self, width=10, text="Repeat Word",
+        buttonReplay = Button(self.parent, width=10, text="Repeat Word",
                               command=self.replay_word)
         self.game_canvas = Canvas(self, width=600, height=250, bg="#FFFFFF")
-        self.word_display = self.game_canvas.create_text((300, 125), text="?",
+        self.word_display = self.game_canvas.create_text((300, 105), text="?",
                            font=("Helvetica", 50, "bold"), fill="#004183")
         self.progress_display = self.game_canvas.create_text((593, 5),
                                 text="%d/%d"%(1, self.parent.list_length),
@@ -93,13 +93,13 @@ QIBBCgJh4NAmijAxAKxAEJiwnBcN4gAwdAIIHYNUB24Qx8U8QFn2guEaI/KZgAAAOw=="""
         self.progress_bar = ProgressBar(self, width=300,
                                        increments=len(self.parent.current_list.words))
         self.game_canvas.create_window(500, 10, anchor=NE, window=self.progress_bar)
-        self.game_canvas.create_window(300, 200, window=self.entry)
-        self.game_canvas_image = self.game_canvas.create_image(500, 200)
-        self.game_canvas.grid(row=0, column=0, columnspan=3)
-        buttonReplay.grid(row=1, column=0)
-        self.buttonSubmit.grid(row=1, column=1)
-        self.buttonNext.grid(row=1, column=2)
-
+        self.game_canvas.create_window(300, 180, window=self.entry)
+        self.game_canvas_image = self.game_canvas.create_image(500, 170)
+        self.game_canvas.create_window(150, 230, window=buttonReplay)
+        self.game_canvas.create_window(300, 230, window=self.buttonSubmit)
+        self.game_canvas.create_window(450, 230, window=self.buttonNext)
+        self.game_canvas.pack()
+        
     def start(self):
         self.current_list_iter = iter(self.parent.current_list.words)
         self.current_word = self.current_list_iter.next()

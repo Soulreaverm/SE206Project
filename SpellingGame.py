@@ -64,8 +64,9 @@ class SpellingGame(Tk):
         self.list_length = len(self.current_list.words)
         self.start_frame.pack_forget()
         self.results_frame.pack_forget()
-        self.game_frame.pack()
+        self.game_frame = GameFrame(self)
         self.game_frame.start()
+        self.game_frame.pack()
 
     def show_results(self, time_elapsed):
         self.game_frame.pack_forget()
@@ -86,8 +87,6 @@ class SpellingGame(Tk):
 
         self.login_frame = LoginFrame(self)
         self.login_frame.pack()
-
-        self.game_frame = GameFrame(self)
 
         self.start_frame = StartFrame(self)
 

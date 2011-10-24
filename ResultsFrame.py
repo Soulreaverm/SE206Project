@@ -1,4 +1,5 @@
-from Tkinter import Frame, Button, Label
+from Tkinter import Frame, Button, Label, Canvas
+from Tkconstants import *
 from ResultsTable import ResultsTable
 
 class ResultsFrame(Frame):
@@ -6,42 +7,44 @@ class ResultsFrame(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.parent = parent
-        self.results_list = ResultsTable(self)
-        self.results_list.grid(row=0, column=1, columnspan=2)
-        buttonRetry = Button(self, text="Retry",
+        self.results_list = ResultsTable(self.parent, height=160, width=250)
+        buttonRetry = Button(self.parent, text="Retry", width=10,
                              command=self.restart)
-        buttonNewlist = Button(self, text="New List",
+        buttonNewlist = Button(self.parent, text="New List", width=10,
                                command=self.new_selection)
-        buttonExit = Button(self, text="Quit",
+        buttonExit = Button(self.parent, text="Quit", width=10,
                             command=self.parent.destroy)
+        self.results_canvas = Canvas(self, width=600, height=250, bg="#FFFFFF")
+        font = ("Helvetica", 20)
+        self.results_canvas.create_text(300, 15, text="Results", fill="#004183",
+                                        font=font)
+        self.results_canvas.create_window(310, 35, window=self.results_list,
+                                          anchor=NW)
+        self.results_canvas.create_window(150, 230, window=buttonRetry)
+        self.results_canvas.create_window(300, 230, window=buttonNewlist)
+        self.results_canvas.create_window(450, 230, window=buttonExit)
+        self.results_canvas.create_text(25, 55, font=font, text="List:",
+                                        anchor=W)
+        self.results_canvas.create_text(25, 85, font=font, text="Score:",
+                                        anchor=W)
+        self.results_canvas.create_text(25, 115, font=font, text="Time:",
+                                        anchor=W)
+        self.results_canvas.create_text(25, 145, font=font, text="Best Score:",
+                                        anchor=W)
+        self.results_canvas.create_text(25, 175, font=font, text="Best Time:",
+                                        anchor=W)
+        self.list_name = self.results_canvas.create_text(300, 55, font=font,
+                                                         anchor=E)
+        self.score_number = self.results_canvas.create_text(300, 85, font=font,
+                                                            anchor=E)
+        self.time_number = self.results_canvas.create_text(300, 115, font=font,
+                                                           anchor=E)
+        self.best_score = self.results_canvas.create_text(300, 145, font=font,
+                                                          anchor=E)
+        self.best_time = self.results_canvas.create_text(300, 175, font=font,
+                                                         anchor=E)
+        self.results_canvas.pack()
         
-        label_frame = Frame(self)
-        listLabel = Label(label_frame, text="List:")
-        scoreLabel = Label(label_frame, text="Score:")
-        timeLabel = Label(label_frame, text="Time:")
-        bestScoreLabel = Label(label_frame, text="Best Score:")
-        bestTimeLabel = Label(label_frame, text="Best Time:")
-        self.listName = Label(label_frame)
-        self.scoreNumber = Label(label_frame)
-        self.timeNumber = Label(label_frame)
-        self.bestScoreNumber = Label(label_frame)
-        self.bestTimeNumber = Label(label_frame)
-        label_frame.grid(row=0, column=0)
-        listLabel.grid(column=0, row=0)
-        scoreLabel.grid(column=0, row=1)
-        timeLabel.grid(column=0, row=2)
-        bestScoreLabel.grid(column=0, row=3)
-        bestTimeLabel.grid(column=0, row=4)
-        self.listName.grid(column=1, row=0)
-        self.scoreNumber.grid(column=1, row=1)
-        self.timeNumber.grid(column=1, row=2)
-        self.bestScoreNumber.grid(column=1, row=3)
-        self.bestTimeNumber.grid(column=1, row=4)
-        buttonRetry.grid(row=1, column=0)
-        buttonNewlist.grid(row=1, column=1)
-        buttonExit.grid(row=1, column=2)
-
-
     def calculate(self, word_list, time_elapsed):
         score = 0
         user_id = self.parent.user.uid
@@ -69,11 +72,11 @@ class ResultsFrame(Frame):
             self.parent.db.sql("""INSERT INTO user_list_map VALUES
                                ('%d', '%d', '%d', '%d')"""
                                %(user_id, list_id, best_score, best_time))
-        self.listName.config(text=word_list.name)
-        self.scoreNumber.config(text=score)
-        self.timeNumber.config(text=time_elapsed)
-        self.bestScoreNumber.config(text=best_score)
-        self.bestTimeNumber.config(text=best_time)
+        self.results_canvas.itemconfig(self.list_name, text=word_list.name)
+        self.results_canvas.itemconfig(self.score_number, text=score)
+        self.results_canvas.itemconfig(self.time_number, text=time_elapsed)
+        self.results_canvas.itemconfig(self.best_score, text=best_score)
+        self.results_canvas.itemconfig(self.best_time, text=best_time)
    
     def restart(self):
         self.results_list.clear()
