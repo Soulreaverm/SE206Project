@@ -2,13 +2,14 @@ from Tkinter import Frame, Button, Canvas, Entry, PhotoImage
 from Tkconstants import *
 from ProgressBar import ProgressBar
 class GameFrame(Frame):
+    """A class which controls the Game screen of the spelling aid."""
     
     def __init__(self, parent):
         Frame.__init__(self, parent, width=600, height=250)
         self.parent = parent    
        
     def init_gui(self):
-
+        #Tick and cross images hard-coded
         correct = """R0lGODlhQABAAOeqAAAAAAABAAACAAADAAAEAAAFAAAFAQAGAQAHAQEHAQEIAQEJAQEKAQEKAgEL
 AgEMAgENAgEPAgIPAgIQAgIRAwITAwIUAwIVBAMVBAIWAwIWBAIXBAMXBAMYAwIZBAMZBAMaBQMb
 BAMdBQMeBQMfBQMgBQQgBQQiBgQkBgQlBgQmBwQnBwUnBgUoBwUqBwUrBwUsBwUsCAUtCAUuCAUv
@@ -71,8 +72,10 @@ InWAWWFSbrUN1KG4fVhVIoR0OSCiOvioRKID1mpVxWJQlhDhmwyI3HXgKZEonVcywAboBegUmghC
 alRwCH0FKHvzOwoAJuAG3R3QEz2oTAkM4T+qfWJ8EkwAHDronE9EsCYpKMT7sBIK6gkLAAFow2jE
 wwkfPAoAMCBEVcZiCk0U72RWBEiD4jAxBFcBgAaEoBEqJmE7dwFgATcRSikuYQRqASAGg1DFKSAh
 QIBBCgJh4NAmijAxAKxAEJiwnBcN4gAwdAIIHYNUB24Qx8U8QFn2guEaI/KZgAAAOw=="""
+        #Create actual image objects
         self.correct_img = PhotoImage(data=correct)
         self.wrong_img = PhotoImage(data=wrong)
+        #Create the UI elements
         self.entry = Entry(self.parent, width=15, 
                            font=('Helvetica', 20, 'normal'), justify=CENTER)
         self.entry.bind("<Return>", lambda x:self.buttonSubmit.invoke())
@@ -101,6 +104,7 @@ QIBBCgJh4NAmijAxAKxAEJiwnBcN4gAwdAIIHYNUB24Qx8U8QFn2guEaI/KZgAAAOw=="""
         self.game_canvas.pack()
         
     def start(self):
+        """Method to be invoked when the game is starting. Begins timer and sets up game"""
         self.current_list_iter = iter(self.parent.current_list.words)
         self.current_word = self.current_list_iter.next()
         self.parent.festival.speech(self.current_word)
@@ -109,6 +113,7 @@ QIBBCgJh4NAmijAxAKxAEJiwnBcN4gAwdAIIHYNUB24Qx8U8QFn2guEaI/KZgAAAOw=="""
         self.tick()
 
     def next_word(self):
+        """Speak the next word in the list, update UI elements"""
         try:
             self.current_word = self.current_list_iter.next()
             index = self.parent.current_list.words.index(self.current_word) + 1
@@ -122,22 +127,28 @@ QIBBCgJh4NAmijAxAKxAEJiwnBcN4gAwdAIIHYNUB24Qx8U8QFn2guEaI/KZgAAAOw=="""
             self.buttonNext.configure(state=DISABLED)
             self.parent.festival.speech(self.current_word)
         except StopIteration:
+            #If there are no more words in the list, the game is over.
             self.list_complete()
 
     def list_complete(self):
+        """The game is finished; stop the timer and show the results page"""
         self.parent.after_cancel(self.timer)
         self.parent.show_results(self.time_elapsed)
         
 
     def replay_word(self):
+       """Have the current word spoken again"""
        self.parent.festival.speech(self.current_word)
 
     def submit_word(self, event=None):
+        """Process user input on the current word"""
         guess = self.entry.get()
         self.entry.delete(0, END)
         if guess == self.current_word.word:
+            #The guess was right
             self.correct(guess)
         else:
+            #The guess was wrong
             self.incorrect(guess)
         self.game_canvas.itemconfig(self.word_display, text='%s'%(self.current_word))
         self.buttonNext.configure(state=NORMAL)
@@ -146,18 +157,21 @@ QIBBCgJh4NAmijAxAKxAEJiwnBcN4gAwdAIIHYNUB24Qx8U8QFn2guEaI/KZgAAAOw=="""
         
 
     def correct(self, guess):
+        """The user made a correct guess, update UI elements to reflect this"""
         self.current_word.setAnswer(guess, True)
         self.game_canvas.itemconfig(self.game_canvas_image, image=self.correct_img)
         self.game_canvas.itemconfig(self.word_display, fill="#139E1C")
         self.progress_bar.increment(True)
 
     def incorrect(self, guess):
+        """The user made an incorrect guess, update UI elements to reflect this"""
         self.current_word.setAnswer(guess, False)
         self.game_canvas.itemconfig(self.game_canvas_image, image=self.wrong_img)
         self.game_canvas.itemconfig(self.word_display, fill="#F30000")
         self.progress_bar.increment(False)
 
     def tick(self):
+        """A second has passed, update the timer and reschedule this call for next second"""
         seconds = (self.time_elapsed)%60
         minutes = self.time_elapsed/60
         separator = ":" if seconds > 9 else ":0"

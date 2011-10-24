@@ -3,6 +3,7 @@ from Tkinter import Tk, Button, Entry, Frame, LEFT, END
 import tkFileDialog
 
 class ButtonEntry(Frame):
+    """A widget for opening a file dialog for tldr files"""
     def __init__(self, parent, width=20):
         Frame.__init__(self, parent)
 

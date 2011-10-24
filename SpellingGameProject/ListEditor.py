@@ -6,6 +6,7 @@ from functools import partial
 import tkFont
 
 class ListEditor(Frame):
+    """Class which manages the List Editor views"""
 
     def __init__(self, parent):
         Frame.__init__(self, parent)

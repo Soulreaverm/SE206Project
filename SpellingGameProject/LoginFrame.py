@@ -6,13 +6,14 @@ from SpellingDatabase import SpellingDatabase
 from User import User
 
 class LoginFrame(Frame):
-    
+    """Class which controls the Login and Register screens of the spelling aid"""
     def __init__(self, parent):
 
         Frame.__init__(self, parent)
         self.parent = parent
         self.db = self.parent.db
-    
+        
+        #Create login screen widgets
         font = ("Helvetica", 20)
         self.userEntry = Entry(self.parent, width=15, font=font)
         self.passEntry = Entry(self.parent, width=15, show='*', font=font)
@@ -20,7 +21,8 @@ class LoginFrame(Frame):
         buttonSubmit = Button(self.parent, text="Login", command=self.login, width=10)
         buttonRegSwitch = Button(self.parent, text="New User",
                                  command=self.viewRegister, width=10)
-
+        
+        #Create register screen widgets
         self.userRegEntry = Entry(self.parent, width=15, font=font)
         self.passRegEntry = Entry(self.parent, width=15, show='*',
                                   font=font)
@@ -30,6 +32,7 @@ class LoginFrame(Frame):
         buttonBack = Button(self.parent, text="Back",
                             command=self.viewLogin, width=10)
         
+        #Create a canvas for each screen and populate
         self.login_canvas = Canvas(self, width=600, height=250, bg="#FFFFFF")
         self.register_canvas = Canvas(self, width=600, height=250, bg="#FFFFFF")
        
@@ -60,14 +63,18 @@ class LoginFrame(Frame):
 
 
     def login(self, event=None):
+        "Check the user's input and allow access if it is correct"""
         usernameGiven = self.userEntry.get()
         passwordGiven = self.passEntry.get()
         userDetails = self.db.sql("""SELECT * FROM
                                   users WHERE username='%s'"""
                                   %(usernameGiven.lower().strip()))
+        #Check that the username exists
         if len(userDetails)==1:
             passHash = userDetails[0][2]
+            #Check that the password is correct
             if (hashlib.sha1(passwordGiven).hexdigest() == passHash):
+                #Details are correct, unlock application
                 self.parent.login(User(userDetails[0]))
                 loginFailed = False
             else:
@@ -75,12 +82,14 @@ class LoginFrame(Frame):
         else:
             loginFailed = True
         if loginFailed:
+            #If details are incorrect show an error message
             tkMessageBox.showerror("Login Failed",
                                    "Invalid username or password")
             self.userEntry.delete(0, END)
             self.passEntry.delete(0, END)
 
     def register(self):
+        """Register a new user with provided input"""
         username = self.userRegEntry.get()
         passwd = self.passRegEntry.get()
         if username != '' and passwd != '':
@@ -91,10 +100,12 @@ class LoginFrame(Frame):
             self.viewLogin()
 
     def viewRegister(self):
+        """Switch to the register screen"""
         self.login_canvas.pack_forget()
         self.register_canvas.pack()
 
     def viewLogin(self):
+        """Switch to the login screen"""
         self.register_canvas.pack_forget()
         self.login_canvas.pack()
         

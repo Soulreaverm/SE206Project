@@ -3,10 +3,11 @@ from Tkconstants import *
 from ResultsTable import ResultsTable
 
 class ResultsFrame(Frame):
-    
+    "Class which controls the results screen of the spelling aid""" 
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.parent = parent
+        #Create UI elements
         self.results_list = ResultsTable(self.parent, height=160, width=250)
         buttonRetry = Button(self.parent, text="Retry", width=10,
                              command=self.restart)
@@ -46,6 +47,8 @@ class ResultsFrame(Frame):
         self.results_canvas.pack()
         
     def calculate(self, word_list, time_elapsed):
+        """Calculate and display the users score and time, as well as personal
+           bests"""
         score = 0
         user_id = self.parent.user.uid
         list_id = word_list.l_id
@@ -66,6 +69,7 @@ class ResultsFrame(Frame):
                            user_id = '%d'"""
                            %(best_score, best_time, list_id, user_id))
         except IndexError:
+            #If the list has not been played before, create a record
             best_score = score
             best_time = time_elapsed
             print "Creating"
@@ -79,9 +83,11 @@ class ResultsFrame(Frame):
         self.results_canvas.itemconfig(self.best_time, text=best_time)
    
     def restart(self):
+        """Clear the results page and restart the game with the current list"""
         self.results_list.clear()
         self.parent.start_game(self.parent.current_list)
 
     def new_selection(self):
+        """Clear the results page and return to the start screen"""
         self.results_list.clear()
         self.parent.new_list()

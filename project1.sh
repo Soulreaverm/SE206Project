@@ -6,5 +6,5 @@ DIR="$( cd -P "$( dirname "$0" )" && pwd )"
 # Change to my directory, in case we were being run from somewhere else
 cd $DIR
 # Run the project
-python SpellingGame.py
+python SpellingGameProject/SpellingGame.py
 

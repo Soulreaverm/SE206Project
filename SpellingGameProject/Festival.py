@@ -3,6 +3,7 @@ from functools import partial
 from Tkinter import Tk, Button, Entry
 import subprocess, os, signal, tkMessageBox
 class FestivalInterface:
+    """A class which provides an interface to Festival. Written by Michael Little"""
     #The FetivalObject contructor creating the popen object
     #and setting the audio mode on festival so that it doesn't close after one (Say Text) command. 
     #A problem on Natty Narwhal

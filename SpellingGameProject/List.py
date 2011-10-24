@@ -1,5 +1,5 @@
 class WordList():
-
+    """This class represents a list of words"""
     def __init__(self, (list_id, name, source, date_edited, num_words)):
         self.l_id = list_id
         self.name = name

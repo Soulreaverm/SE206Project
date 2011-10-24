@@ -2,10 +2,11 @@ from Tkinter import Frame, Button, Canvas, OptionMenu, StringVar
 from Tkconstants import *
 
 class StartFrame(Frame):
-
+    """Class which controls start screen of spelling aid"""
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.parent = parent
+        #Create UI elements
         self.start_canvas = Canvas(self, width=600, height=250, bg="#FFFFFF")
         self.start_canvas.pack()
 
@@ -25,15 +26,18 @@ class StartFrame(Frame):
 
 
     def start(self):
+        """Start the game with the selected list"""
         self.parent.start_game(self.selected_list)
 
     def update(self, event=None):
+        """Change the current list to match selection"""
         list_name = self.list_menu_var.get()
         for word_list in self.parent.list_list:
             if word_list.name == list_name:
                 self.selected_list = word_list
 
     def update_list(self):
+        """Refreshes the list of lists"""
         list_menu = OptionMenu(self, self.list_menu_var,
                                *self.parent.list_list, command=self.update)
         list_menu.configure(width=30)
@@ -41,6 +45,7 @@ class StartFrame(Frame):
         
         
     def welcomeMessage(self):
+        """Show the welcome message"""
         self.start_canvas.create_text((10, 10), anchor=NW, text="Welcome, %s."
                                       %(self.parent.user.username),
                                       font=("Helvetica", 15))
